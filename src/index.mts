@@ -17,7 +17,11 @@ if (!mongoUrl)
   throw new Error("Could not find connection string in the env file");
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+  }),
+);
 
 const server = createServer(app);
 
