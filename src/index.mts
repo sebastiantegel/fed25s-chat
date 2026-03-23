@@ -11,6 +11,7 @@ import Chat from "./models/chatSchema.mjs";
 config();
 
 const mongoUrl = process.env.MONGO_URL;
+const port = process.env.PORT || 3000;
 
 if (!mongoUrl)
   throw new Error("Could not find connection string in the env file");
@@ -84,7 +85,7 @@ io.on("connection", async (socket) => {
   socket.emit("roomList", rooms);
 });
 
-server.listen(3000, async () => {
+server.listen(port, async () => {
   try {
     await mongoose.connect(mongoUrl);
   } catch (error) {
