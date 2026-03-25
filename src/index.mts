@@ -1,4 +1,4 @@
-import express from "express";
+import express, { json } from "express";
 import { createServer } from "node:http";
 import { Server } from "socket.io";
 import cors from "cors";
@@ -6,6 +6,7 @@ import type { Message } from "@sebastiantegel/edutypes";
 import { config } from "dotenv";
 import mongoose from "mongoose";
 import Chat from "./models/chatSchema.mjs";
+import registerRouter from "./routes/register.mjs";
 
 // Gör det möjligt för oss att hämta värden från .env-filen
 config();
@@ -18,6 +19,9 @@ if (!mongoUrl)
 
 const app = express();
 app.use(cors());
+app.use(json());
+
+app.use("/register", registerRouter);
 
 const server = createServer(app);
 
