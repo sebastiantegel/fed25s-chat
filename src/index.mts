@@ -38,16 +38,15 @@ app.use(
   cors({
     origin: allowedOrigins,
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   }),
 );
-app.options(
-  "*",
-  cors({
-    origin: allowedOrigins,
-    credentials: true,
-  }),
-);
+// app.options(
+//   "*",
+//   cors({
+//     origin: allowedOrigins,
+//     credentials: true,
+//   }),
+// );
 app.use(cookieParser());
 app.use(json());
 
@@ -57,8 +56,9 @@ app.use("/login", loginRouter);
 const server = createServer(app);
 
 const io = new Server(server, {
-  cors: { origin: allowedOrigins, credentials: true, methods: ["GET", "POST"] },
+  cors: { origin: allowedOrigins, credentials: true },
   cookie: true,
+  transports: ["polling", "websocket"],
 });
 
 app.get("/ping", (_, res) => {
