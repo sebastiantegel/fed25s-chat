@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "npx tsx watch src/index.mts",
-    "build": "webpack",
-    "start": "node server.js"
+    "build": "tsc",
+    "start": "node index.mjs"
   },
   "keywords": [],
   "author": "Sebastian",
