@@ -7,6 +7,7 @@ import { config } from "dotenv";
 import mongoose from "mongoose";
 import Chat from "./models/chatSchema.mjs";
 import registerRouter from "./routes/register.mjs";
+import { loginRouter } from "./routes/login.mjs";
 
 // Gör det möjligt för oss att hämta värden från .env-filen
 config();
@@ -22,6 +23,7 @@ app.use(cors());
 app.use(json());
 
 app.use("/register", registerRouter);
+app.use("/login", loginRouter);
 
 const server = createServer(app);
 
