@@ -28,13 +28,27 @@ const allowedOrigins = [
 ];
 
 const app = express();
-app.use(cookieParser());
+
+app.use((req, res, next) => {
+  console.log("Origin:", req.headers.origin);
+  next();
+});
+
 app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  }),
+);
+app.options(
+  "*",
   cors({
     origin: allowedOrigins,
     credentials: true,
   }),
 );
+app.use(cookieParser());
 app.use(json());
 
 app.use("/register", registerRouter);
@@ -43,7 +57,7 @@ app.use("/login", loginRouter);
 const server = createServer(app);
 
 const io = new Server(server, {
-  cors: { origin: allowedOrigins, credentials: true },
+  cors: { origin: allowedOrigins, credentials: true, methods: ["GET", "POST"] },
   cookie: true,
 });
 
