@@ -8,6 +8,10 @@ import mongoose from "mongoose";
 import Chat from "./models/chatSchema.mjs";
 import registerRouter from "./routes/register.mjs";
 import { loginRouter } from "./routes/login.mjs";
+import cookieParser from "cookie-parser";
+import cookie from "cookie";
+import jwt from "jsonwebtoken";
+import type { UserDto } from "./models/userDto.mjs";
 
 // Gör det möjligt för oss att hämta värden från .env-filen
 config();
@@ -19,7 +23,13 @@ if (!mongoUrl)
   throw new Error("Could not find connection string in the env file");
 
 const app = express();
-app.use(cors());
+app.use(cookieParser());
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  }),
+);
 app.use(json());
 
 app.use("/register", registerRouter);
@@ -27,7 +37,10 @@ app.use("/login", loginRouter);
 
 const server = createServer(app);
 
-const io = new Server(server, { cors: { origin: "*" } });
+const io = new Server(server, {
+  cors: { origin: true, credentials: true },
+  cookie: true,
+});
 
 app.get("/ping", (_, res) => {
   res.status(200).json({ message: "Alive" });
@@ -36,6 +49,14 @@ app.get("/ping", (_, res) => {
 io.on("connection", async (socket) => {
   console.log("A user connected:", socket.id);
 
+  // Hitta alla cookies
+  const cookies = cookie.parse(socket.handshake.headers.cookie || "");
+
+  // Plocka ut vår cookie (login)
+  const loginCookie = cookies.login;
+
+  console.log("Cookie:", loginCookie);
+
   socket.on("sendMessage", async (theMessage: Message, room: string) => {
     // Lagra meddelandet i en lista eller databas
     // Sök efter chatten i listan med chattar
@@ -43,7 +64,13 @@ io.on("connection", async (socket) => {
     const foundChat = await Chat.findOne({ name: room });
 
     // Om chatten hittades
-    if (foundChat) {
+    if (foundChat && loginCookie) {
+      // Avkoda vår cookie för att då tillbaka användaren
+      const userDto = jwt.decode(loginCookie) as UserDto;
+
+      // Uppdatera meddelandet med den inloggade användaren
+      theMessage.from = userDto.username;
+
       // Lägg till meddelandet i chatten
       foundChat.messages.push(theMessage);
 
