@@ -22,11 +22,16 @@ const port = process.env.PORT || 3000;
 if (!mongoUrl)
   throw new Error("Could not find connection string in the env file");
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://fed25s-chat-cbgzhhgncrhjesg8.swedencentral-01.azurewebsites.net", // add your frontend URL if hosted
+];
+
 const app = express();
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: allowedOrigins,
     credentials: true,
   }),
 );
@@ -38,7 +43,7 @@ app.use("/login", loginRouter);
 const server = createServer(app);
 
 const io = new Server(server, {
-  cors: { origin: "http://localhost:5173", credentials: true },
+  cors: { origin: allowedOrigins, credentials: true },
   cookie: true,
 });
 
