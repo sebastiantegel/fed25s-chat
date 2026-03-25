@@ -67,14 +67,28 @@ app.get("/ping", (_, res) => {
 
 io.on("connection", async (socket) => {
   console.log("A user connected:", socket.id);
+  let loginCookie = null;
 
-  // Hitta alla cookies
-  const cookies = cookie.parse(socket.handshake.headers.cookie || "");
+  if (cookie) {
+    // Hitta alla cookies
+    const cookies = cookie.parse(socket.handshake.headers.cookie || "");
+    loginCookie = cookies.login;
 
-  // Plocka ut vår cookie (login)
-  const loginCookie = cookies.login;
+    if (loginCookie) {
+      // Plocka ut vår cookie (login)
+      console.log("Cookie:", loginCookie);
 
-  console.log("Cookie:", loginCookie);
+      // Skicka listan med rum till webbläsaren
+      const chats = await Chat.find();
+
+      // Loopa igenom listan av chattar. Returnera namnet på varje chat och
+      // lagra det i en ny lista (rooms)
+      const rooms = chats.map((chat) => chat.name);
+
+      // Skicka alla chatnamn till frontend
+      socket.emit("roomList", rooms);
+    }
+  }
 
   socket.on("sendMessage", async (theMessage: Message, room: string) => {
     // Lagra meddelandet i en lista eller databas
@@ -122,16 +136,6 @@ io.on("connection", async (socket) => {
       socket.emit("chatHistory", foundChat.messages);
     }
   });
-
-  // Skicka listan med rum till webbläsaren
-  const chats = await Chat.find();
-
-  // Loopa igenom listan av chattar. Returnera namnet på varje chat och
-  // lagra det i en ny lista (rooms)
-  const rooms = chats.map((chat) => chat.name);
-
-  // Skicka alla chatnamn till frontend
-  socket.emit("roomList", rooms);
 });
 
 server.listen(port, async () => {
