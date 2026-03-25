@@ -29,24 +29,12 @@ const allowedOrigins = [
 
 const app = express();
 
-app.use((req, res, next) => {
-  console.log("Origin:", req.headers.origin);
-  next();
-});
-
 app.use(
   cors({
     origin: allowedOrigins,
     credentials: true,
   }),
 );
-// app.options(
-//   "*",
-//   cors({
-//     origin: allowedOrigins,
-//     credentials: true,
-//   }),
-// );
 app.use(cookieParser());
 app.use(json());
 
@@ -69,10 +57,14 @@ io.on("connection", async (socket) => {
   console.log("A user connected:", socket.id);
   let loginCookie = null;
 
+  console.log("Cookie:", cookie);
+
   if (cookie) {
     // Hitta alla cookies
     const cookies = cookie.parse(socket.handshake.headers.cookie || "");
     loginCookie = cookies.login;
+
+    console.log("Login cookie:", loginCookie);
 
     if (loginCookie) {
       // Plocka ut vår cookie (login)
