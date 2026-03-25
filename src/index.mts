@@ -23,8 +23,8 @@ if (!mongoUrl)
   throw new Error("Could not find connection string in the env file");
 
 const allowedOrigins = [
-  "http://localhost:5173",
-  "http://fed25s-chat-cbgzhhgncrhjesg8.swedencentral-01.azurewebsites.net", // add your frontend URL if hosted
+  "https://localhost:5173",
+  "https://fed25s-chat-cbgzhhgncrhjesg8.swedencentral-01.azurewebsites.net", // add your frontend URL if hosted
 ];
 
 const app = express();

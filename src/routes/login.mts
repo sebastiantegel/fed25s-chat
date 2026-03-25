@@ -23,7 +23,7 @@ loginRouter.post("/", async (req, res) => {
         expires,
         sameSite: "none",
         secure: true,
-        httpOnly: false,
+        httpOnly: true,
       });
 
       return res.status(200).json(userDto);
