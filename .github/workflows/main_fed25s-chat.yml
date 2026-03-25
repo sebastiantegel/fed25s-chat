@@ -28,6 +28,11 @@ jobs:
           npm install
           npm run build --if-present
 
+      - name: Prepare deployment package
+        run: |
+          cp package.json dist/
+          cp package-lock.json dist/
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
