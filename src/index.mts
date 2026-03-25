@@ -23,9 +23,6 @@ const server = createServer(app);
 
 const io = new Server(server, { cors: { origin: "*" } });
 
-// const rooms = ["Next.js", "express", "socket.io"];
-// const chats: Chat[] = [];
-
 app.get("/ping", (_, res) => {
   res.status(200).json({ message: "Alive" });
 });
