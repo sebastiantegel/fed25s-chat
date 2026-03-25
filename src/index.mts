@@ -55,31 +55,30 @@ app.get("/ping", (_, res) => {
 
 io.on("connection", async (socket) => {
   console.log("A user connected:", socket.id);
-  let loginCookie = null;
 
-  console.log("Cookie:", cookie);
+  // Log everything to diagnose the issue
+  console.log("All handshake headers:", socket.handshake.headers);
+  console.log("Raw cookie header:", socket.handshake.headers.cookie);
 
-  if (cookie) {
-    // Hitta alla cookies
-    const cookies = cookie.parse(socket.handshake.headers.cookie || "");
-    loginCookie = cookies.login;
+  const cookies = cookie.parse(socket.handshake.headers.cookie || "");
+  console.log("Parsed cookies:", cookies);
 
-    console.log("Login cookie:", loginCookie);
+  const loginCookie = cookies.login;
+  console.log("Login cookie:", loginCookie);
 
-    if (loginCookie) {
-      // Plocka ut vår cookie (login)
-      console.log("Cookie:", loginCookie);
+  if (loginCookie) {
+    // Plocka ut vår cookie (login)
+    console.log("Cookie:", loginCookie);
 
-      // Skicka listan med rum till webbläsaren
-      const chats = await Chat.find();
+    // Skicka listan med rum till webbläsaren
+    const chats = await Chat.find();
 
-      // Loopa igenom listan av chattar. Returnera namnet på varje chat och
-      // lagra det i en ny lista (rooms)
-      const rooms = chats.map((chat) => chat.name);
+    // Loopa igenom listan av chattar. Returnera namnet på varje chat och
+    // lagra det i en ny lista (rooms)
+    const rooms = chats.map((chat) => chat.name);
 
-      // Skicka alla chatnamn till frontend
-      socket.emit("roomList", rooms);
-    }
+    // Skicka alla chatnamn till frontend
+    socket.emit("roomList", rooms);
   }
 
   socket.on("sendMessage", async (theMessage: Message, room: string) => {
