@@ -46,7 +46,7 @@ const server = createServer(app);
 const io = new Server(server, {
   cors: { origin: allowedOrigins, credentials: true },
   cookie: true,
-  transports: ["polling", "websocket"],
+  // transports: ["polling", "websocket"],
 });
 
 app.get("/ping", (_, res) => {
