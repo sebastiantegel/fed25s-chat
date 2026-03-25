@@ -22,10 +22,7 @@ const port = process.env.PORT || 3000;
 if (!mongoUrl)
   throw new Error("Could not find connection string in the env file");
 
-const allowedOrigins = [
-  "https://localhost:5173",
-  "https://fed25s-chat-cbgzhhgncrhjesg8.swedencentral-01.azurewebsites.net", // add your frontend URL if hosted
-];
+const allowedOrigins = ["https://localhost:5173", "http://localhost:5173"];
 
 const app = express();
 
@@ -46,7 +43,6 @@ const server = createServer(app);
 const io = new Server(server, {
   cors: { origin: allowedOrigins, credentials: true },
   cookie: true,
-  // transports: ["polling", "websocket"],
 });
 
 app.get("/ping", (_, res) => {
@@ -56,12 +52,7 @@ app.get("/ping", (_, res) => {
 io.on("connection", async (socket) => {
   console.log("A user connected:", socket.id);
 
-  // Log everything to diagnose the issue
-  // console.log("All handshake headers:", socket.handshake.headers);
-  // console.log("Raw cookie header:", socket.handshake.headers.cookie);
-
   const cookies = cookie.parse(socket.handshake.headers.cookie || "");
-  // console.log("Parsed cookies:", cookies);
 
   const loginCookie = cookies.login;
   console.log("Login cookie:", loginCookie);
