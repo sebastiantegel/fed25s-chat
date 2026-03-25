@@ -57,11 +57,11 @@ io.on("connection", async (socket) => {
   console.log("A user connected:", socket.id);
 
   // Log everything to diagnose the issue
-  console.log("All handshake headers:", socket.handshake.headers);
-  console.log("Raw cookie header:", socket.handshake.headers.cookie);
+  // console.log("All handshake headers:", socket.handshake.headers);
+  // console.log("Raw cookie header:", socket.handshake.headers.cookie);
 
   const cookies = cookie.parse(socket.handshake.headers.cookie || "");
-  console.log("Parsed cookies:", cookies);
+  // console.log("Parsed cookies:", cookies);
 
   const loginCookie = cookies.login;
   console.log("Login cookie:", loginCookie);
